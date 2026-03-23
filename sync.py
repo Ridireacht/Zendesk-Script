@@ -19,11 +19,11 @@ def main():
     spreadsheet = init_google(json_key)
     current_sheet = spreadsheet.worksheet(CURRENT_SHEET)
 
-    current = load_sheet(current_sheet)
+    loaded_current_sheet = load_sheet(current_sheet)
 
     # Обрабатываем тикеты из выгрузки на предмет потенциальных изменений в Гугл-доку
     add, update = detect_changes(
-        tickets, current
+        tickets, loaded_current_sheet
     )
 
     # И выводим, что предполагается изменить

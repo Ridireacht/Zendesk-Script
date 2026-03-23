@@ -15,8 +15,8 @@ def normalize(val):
     return str(val).strip()
 
 # Определяем изменения, которые будут внесены в таблицу
-def detect_changes(csv_tickets, active):
-    # Набор тикетов на добавление; обновление; перемещение на лист Inactive; перемещение с листа Inactive на лист Active
+def detect_changes(csv_tickets, loaded_current_sheet):
+    # Набор тикетов на добавление; обновление
     add = []
     update = {}
 
@@ -24,8 +24,8 @@ def detect_changes(csv_tickets, active):
         changes = {}
 
         # Тикет есть на листе Active
-        if ticket_id in active:
-            sheet_data = active[ticket_id]["data"]
+        if ticket_id in loaded_current_sheet:
+            sheet_data = loaded_current_sheet[ticket_id]["data"]
 
             # Проверяем на наличие изменений
             for field in TRACK_FIELDS:
