@@ -5,8 +5,7 @@ ZENDESK_URL = "https://virtual-ats.zendesk.com/agent/tickets/"
 SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1vGWl0ASmUsYroAQqOjl23PKc6hWPhD3X0ByZzU5szoY/edit"
 
 # Название листов в Гугл-доке
-ACTIVE_SHEET = "Active"
-INACTIVE_SHEET = "Inactive"
+CURRENT_SHEET = "Текущие тикеты"
 
 # Маппинг полей (столбцов) между Гугл-докой и местной структурой для хранения тикетов
 FIELD_MAPPING = {

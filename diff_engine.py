@@ -15,12 +15,10 @@ def normalize(val):
     return str(val).strip()
 
 # Определяем изменения, которые будут внесены в таблицу
-def detect_changes(csv_tickets, active, inactive):
+def detect_changes(csv_tickets, active):
     # Набор тикетов на добавление; обновление; перемещение на лист Inactive; перемещение с листа Inactive на лист Active
     add = []
     update = {}
-    deactivate = []
-    reactivate = []
 
     for ticket_id, t in csv_tickets.items():
         changes = {}
@@ -40,34 +38,15 @@ def detect_changes(csv_tickets, active, inactive):
             if changes:
                 update[ticket_id] = changes
 
-        # Тикет есть на листе Inactive и в текущей выгрузке
-        elif ticket_id in inactive:
-            reactivate.append(ticket_id)
-            sheet_data = inactive[ticket_id]["data"]
-
-            # Проверяем на наличие изменений
-            for field in TRACK_FIELDS:
-                sheet_val = normalize(sheet_data.get(field_name(field), ""))
-                csv_val = normalize(t.get(field, ""))
-
-                if sheet_val != csv_val:
-                    changes[field_name(field)] = (sheet_val, csv_val)
-
-            if changes:
-                update[ticket_id] = changes
-
+        # Тикета нет на листе
         else:
             add.append(ticket_id)
 
-    # Тикет есть на листе Active, но не в текущей выгрузке
-    for ticket_id in active:
-        if ticket_id not in csv_tickets:
-            deactivate.append(ticket_id)
+    return add, update
 
-    return add, update, deactivate, reactivate
 
 # Выводим список потенциальных изменений в Гугл-доку
-def print_plan(add, update, deactivate, reactivate):
+def print_plan(add, update):
     print()
 
     if add:
@@ -81,15 +60,5 @@ def print_plan(add, update, deactivate, reactivate):
             print(f"\n~ {tid}")
             for f, (old, new) in fields.items():
                 print(f"{f}: {old} ---> {new}")
-
-    if deactivate:
-        print("\nПеремещаются в Inactive:")
-        for tid in deactivate:
-            print(" -", tid)
-
-    if reactivate:
-        print("\nВозврат в Active:")
-        for tid in reactivate:
-            print(" >", tid)
 
     print()

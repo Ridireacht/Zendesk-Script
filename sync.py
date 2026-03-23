@@ -1,9 +1,9 @@
 from csv_sheet_updater import update_sheet_with_tickets
-from utils import find_file, load_sheet, get_sheet_headers, make_row
+from utils import find_file, load_sheet
 from csv_loader import parse_tickets_from_file
 from google_client import init_google
 from diff_engine import detect_changes, print_plan
-from config import ACTIVE_SHEET, INACTIVE_SHEET
+from config import CURRENT_SHEET
 
 
 def main():
@@ -17,22 +17,20 @@ def main():
 
     # Получаем себе Гугл-доку, с которой работаем, а также её листы
     spreadsheet = init_google(json_key)
-    active_sheet = spreadsheet.worksheet(ACTIVE_SHEET)
-    inactive_sheet = spreadsheet.worksheet(INACTIVE_SHEET)
+    current_sheet = spreadsheet.worksheet(CURRENT_SHEET)
 
-    active = load_sheet(active_sheet)
-    inactive = load_sheet(inactive_sheet)
+    current = load_sheet(current_sheet)
 
     # Обрабатываем тикеты из выгрузки на предмет потенциальных изменений в Гугл-доку
-    add, update, deactivate, reactivate = detect_changes(
-        tickets, active, inactive
+    add, update = detect_changes(
+        tickets, current
     )
 
     # И выводим, что предполагается изменить
-    print_plan(add, update, deactivate, reactivate)
+    print_plan(add, update)
 
     # Изменений нет — ничего не трогаем
-    if not any([add, update, deactivate, reactivate]):
+    if not any([add, update]):
         print("Изменений нет")
         return
 
@@ -43,7 +41,7 @@ def main():
         return
 
     # Обновляем Гугл-доку данными
-    update_sheet_with_tickets(active_sheet, inactive_sheet, add, update, deactivate, reactivate, tickets)
+    update_sheet_with_tickets(current_sheet, add, update, tickets)
 
     print("Готово")
 
