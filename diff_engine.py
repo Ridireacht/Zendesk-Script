@@ -19,6 +19,7 @@ def detect_changes(csv_tickets, loaded_current_sheet):
     # Набор тикетов на добавление; обновление
     add = []
     update = {}
+    delete = []
 
     for ticket_id, t in csv_tickets.items():
         changes = {}
@@ -42,11 +43,18 @@ def detect_changes(csv_tickets, loaded_current_sheet):
         else:
             add.append(ticket_id)
 
-    return add, update
+
+    # Отыскиваем тикеты на удаление
+    for ticket_id in loaded_current_sheet:
+        if ticket_id not in csv_tickets:
+            delete.append(ticket_id)
+
+
+    return add, update, delete
 
 
 # Выводим список потенциальных изменений в Гугл-доку
-def print_plan(add, update):
+def print_plan(add, update, delete):
     print()
 
     if add:
@@ -60,5 +68,10 @@ def print_plan(add, update):
             print(f"\n~ {tid}")
             for f, (old, new) in fields.items():
                 print(f"{f}: {old} ---> {new}")
+
+    if delete:
+        print("\nУдаляются:")
+        for tid in delete:
+            print(" -", tid)
 
     print()

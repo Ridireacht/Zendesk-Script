@@ -22,15 +22,15 @@ def main():
     loaded_current_sheet = load_sheet(current_sheet)
 
     # Обрабатываем тикеты из выгрузки на предмет потенциальных изменений в Гугл-доку
-    add, update = detect_changes(
+    add, update, delete = detect_changes(
         tickets, loaded_current_sheet
     )
 
     # И выводим, что предполагается изменить
-    print_plan(add, update)
+    print_plan(add, update, delete)
 
     # Изменений нет — ничего не трогаем
-    if not any([add, update]):
+    if not any([add, update, delete]):
         print("Изменений нет")
         return
 
@@ -41,7 +41,7 @@ def main():
         return
 
     # Обновляем Гугл-доку данными
-    update_sheet_with_tickets(current_sheet, add, update, tickets)
+    update_sheet_with_tickets(current_sheet, add, update, delete, tickets)
 
     print("Готово")
 

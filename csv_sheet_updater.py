@@ -1,7 +1,7 @@
 from utils import get_sheet_headers, make_row, load_sheet
 
 
-def update_sheet_with_tickets(current_sheet, add, update, tickets):
+def update_sheet_with_tickets(current_sheet, add, update, delete, tickets):
     # Заголовки листов
     current_sheet_headers = get_sheet_headers(current_sheet)
 
@@ -25,3 +25,9 @@ def update_sheet_with_tickets(current_sheet, add, update, tickets):
     new_rows = [make_row(tickets[tid], current_sheet_headers) for tid in add]
     if new_rows:
         current_sheet.append_rows(new_rows, value_input_option="USER_ENTERED")
+
+
+    if delete:
+        # удаляем все строки в Active в обратном порядке
+        for tid in sorted(delete, key=lambda x: loaded_current_sheet[x]["row"], reverse=True):
+            current_sheet.delete_rows(loaded_current_sheet[tid]["row"])
